@@ -14,7 +14,8 @@ interface NoteEditorProps {
   initialContent?: string;
   initialCategory?: string;
   initialTags?: string[];
-  onSubmit: (data: { title: string; content: string; category: string; tags: string[] }) => void;
+  initialIsPublic?: boolean;
+  onSubmit: (data: { title: string; content: string; category: string; tags: string[]; is_public: boolean }) => void;
   submitLabel?: string;
 }
 
@@ -23,6 +24,7 @@ export default function NoteEditor({
   initialContent = "",
   initialCategory = "",
   initialTags = [],
+  initialIsPublic = false,
   onSubmit,
   submitLabel = "保存",
 }: NoteEditorProps) {
@@ -30,6 +32,7 @@ export default function NoteEditor({
   const [content, setContent] = useState(initialContent);
   const [category, setCategory] = useState(initialCategory);
   const [tagInput, setTagInput] = useState(initialTags.join(", "));
+  const [isPublic, setIsPublic] = useState(initialIsPublic);
   const [categories, setCategories] = useState<Category[]>([]);
   const [showCatDropdown, setShowCatDropdown] = useState(false);
   const [showNewCatInput, setShowNewCatInput] = useState(false);
@@ -68,7 +71,7 @@ export default function NoteEditor({
       .split(",")
       .map((t) => t.trim())
       .filter(Boolean);
-    onSubmit({ title, content, category, tags });
+    onSubmit({ title, content, category, tags, is_public: isPublic });
   };
 
   return (
@@ -158,6 +161,26 @@ export default function NoteEditor({
           onChange={(e) => setTagInput(e.target.value)}
           className="flex-1 bg-white/10 border border-white/20 rounded-xl px-4 py-2 placeholder-white/40 focus:outline-none focus:border-white/40"
         />
+      </div>
+
+      {/* 公开/私密开关 */}
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={() => setIsPublic(!isPublic)}
+          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+            isPublic ? "bg-green-500" : "bg-white/20"
+          }`}
+        >
+          <span
+            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+              isPublic ? "translate-x-6" : "translate-x-1"
+            }`}
+          />
+        </button>
+        <span className="text-sm text-white/70">
+          {isPublic ? "公开（将发布到公网）" : "私密（仅本地可见）"}
+        </span>
       </div>
 
       <RichTextEditor

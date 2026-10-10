@@ -20,6 +20,7 @@ export async function GET(
     title: string;
     content: string;
     category: string;
+    is_public: number;
     created_at: string;
     updated_at: string;
     tags: string | null;
@@ -42,7 +43,7 @@ export async function PUT(
 ) {
   const { id } = await params;
   const body = await request.json();
-  const { title, content, category, tags } = body;
+  const { title, content, category, tags, is_public } = body;
 
   const db = getDb();
 
@@ -52,8 +53,8 @@ export async function PUT(
   }
 
   db.prepare(
-    "UPDATE notes SET title = ?, content = ?, category = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?"
-  ).run(title, content, category ?? "", id);
+    "UPDATE notes SET title = ?, content = ?, category = ?, is_public = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?"
+  ).run(title, content, category ?? "", is_public ? 1 : 0, id);
 
   // 重新处理标签
   if (tags) {

@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getUploadDir, ensureDir } from "@/lib/storage";
 import path from "path";
 import fs from "fs";
-
-const UPLOAD_DIR = path.join(process.cwd(), "uploads");
 
 export async function GET(
   _request: NextRequest,
@@ -12,7 +11,8 @@ export async function GET(
 
   // 防止路径遍历
   const safeName = path.basename(filename);
-  const filePath = path.join(UPLOAD_DIR, safeName);
+  const uploadDir = getUploadDir();
+  const filePath = path.join(uploadDir, safeName);
 
   if (!fs.existsSync(filePath)) {
     return NextResponse.json({ error: "文件不存在" }, { status: 404 });

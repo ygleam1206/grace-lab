@@ -1,19 +1,14 @@
 import Database from "better-sqlite3";
-import path from "path";
-import fs from "fs";
+import { getDbPath, getDataDir, ensureDir } from "@/lib/storage";
 
-const DB_DIR = path.join(process.cwd(), "data");
-const DB_PATH = path.join(DB_DIR, "grace-blog.db");
-
-if (!fs.existsSync(DB_DIR)) {
-  fs.mkdirSync(DB_DIR, { recursive: true });
-}
+// 确保数据目录存在
+ensureDir(getDataDir());
 
 let db: Database.Database;
 
 function getDb(): Database.Database {
   if (!db) {
-    db = new Database(DB_PATH);
+    db = new Database(getDbPath());
     db.pragma("journal_mode = WAL");
     db.pragma("foreign_keys = ON");
     initTables(db);
@@ -125,6 +120,17 @@ function initTables(db: Database.Database) {
     const hasCover = cols.some((c) => c.name === "cover_image");
     if (!hasCover) {
       db.exec("ALTER TABLE note_categories ADD COLUMN cover_image TEXT DEFAULT ''");
+    }
+  } catch {
+    // 迁移失败不影响正常使用
+  }
+
+  // 迁移：为 notes 添加 is_public 列（公开标记，默认 0 = 不公开）
+  try {
+    const cols = db.prepare("PRAGMA table_info(notes)").all() as { name: string }[];
+    const hasPublic = cols.some((c) => c.name === "is_public");
+    if (!hasPublic) {
+      db.exec("ALTER TABLE notes ADD COLUMN is_public INTEGER DEFAULT 0");
     }
   } catch {
     // 迁移失败不影响正常使用

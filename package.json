@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "export:public": "node scripts/export-public.js",
+    "build:public": "cd public-site && npm run build",
+    "publish": "npm run export:public && npm run build:public"
   },
   "dependencies": {
     "@tiptap/extension-color": "^3.31.4",

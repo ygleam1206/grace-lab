@@ -13,6 +13,7 @@ export default function EditNotePage() {
     content: "",
     category: "",
     tags: [] as string[],
+    is_public: false,
   });
 
   useEffect(() => {
@@ -28,6 +29,7 @@ export default function EditNotePage() {
         content: data.content,
         category: data.category,
         tags: data.tags || [],
+        is_public: data.is_public === 1 || data.is_public === true,
       });
       setLoading(false);
     };
@@ -39,6 +41,7 @@ export default function EditNotePage() {
     content: string;
     category: string;
     tags: string[];
+    is_public: boolean;
   }) => {
     const res = await fetch(`/api/notes/${params.id}`, {
       method: "PUT",
@@ -62,6 +65,7 @@ export default function EditNotePage() {
         initialContent={initialData.content}
         initialCategory={initialData.category}
         initialTags={initialData.tags}
+        initialIsPublic={initialData.is_public}
         onSubmit={handleSubmit}
         submitLabel="保存修改"
       />

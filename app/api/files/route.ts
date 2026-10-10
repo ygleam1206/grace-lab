@@ -1,14 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
+import { getUploadDir, ensureDir } from "@/lib/storage";
 import path from "path";
 import fs from "fs";
 
-const UPLOAD_DIR = path.join(process.cwd(), "uploads");
-
 // 确保上传目录存在
-if (!fs.existsSync(UPLOAD_DIR)) {
-  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
-}
+ensureDir(getUploadDir());
 
 // GET /api/files — 获取文件列表
 export async function GET() {
@@ -27,21 +24,31 @@ export async function POST(request: NextRequest) {
   }
 
   const uniqueName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${file.name}`;
-  const filePath = path.join(UPLOAD_DIR, uniqueName);
+  const uploadDir = getUploadDir();
+  const filePath = path.join(uploadDir, uniqueName);
 
-  const buffer = Buffer.from(await file.arrayBuffer());
-  fs.writeFileSync(filePath, buffer);
+  try {
+    const buffer = Buffer.from(await file.arrayBuffer());
+    fs.writeFileSync(filePath, buffer);
 
-  const db = getDb();
-  const result = db.prepare(
-    "INSERT INTO files (filename, original_name, mime_type, size, path) VALUES (?, ?, ?, ?, ?)"
-  ).run(uniqueName, file.name, file.type, file.size, filePath);
+    const db = getDb();
+    const result = db.prepare(
+      "INSERT INTO files (filename, original_name, mime_type, size, path) VALUES (?, ?, ?, ?, ?)"
+    ).run(uniqueName, file.name, file.type, file.size, uniqueName);
 
-  return NextResponse.json({
-    id: result.lastInsertRowid,
-    filename: uniqueName,
-    original_name: file.name,
-    mime_type: file.type,
-    size: file.size,
-  }, { status: 201 });
+    return NextResponse.json({
+      id: result.lastInsertRowid,
+      filename: uniqueName,
+      original_name: file.name,
+      mime_type: file.type,
+      size: file.size,
+    }, { status: 201 });
+  } catch (error) {
+    // 数据库写入失败时清理已上传的文件
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+    console.error("File upload failed:", error);
+    return NextResponse.json({ error: "文件上传失败" }, { status: 500 });
+  }
 }

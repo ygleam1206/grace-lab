@@ -11,6 +11,7 @@ export default function NewNotePage() {
     content: string;
     category: string;
     tags: string[];
+    is_public: boolean;
   }) => {
     const res = await fetch("/api/notes", {
       method: "POST",
