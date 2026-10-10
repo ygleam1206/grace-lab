@@ -31,6 +31,12 @@ export default function NotePage({ params }: { params: { id: string } }) {
     notFound();
   }
 
+  // 为图片路径添加 basePath 前缀
+  const contentWithBasePath = note.content.replace(
+    /src="\/uploads\//g,
+    'src="/grace-lab/uploads/'
+  );
+
   return (
     <article>
       <Link href="/notes" className="text-sm text-blue-600 hover:text-blue-800 mb-4 inline-block">
@@ -55,7 +61,7 @@ export default function NotePage({ params }: { params: { id: string } }) {
 
       <div
         className="prose prose-gray max-w-none"
-        dangerouslySetInnerHTML={{ __html: note.content }}
+        dangerouslySetInnerHTML={{ __html: contentWithBasePath }}
       />
     </article>
   );
