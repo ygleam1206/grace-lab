@@ -49,3 +49,4 @@ next-env.d.ts
 /public-site/node_modules
 /public-site/out
 /public-site/data
+/public-site/.next
