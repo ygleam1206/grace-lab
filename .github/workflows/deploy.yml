@@ -44,6 +44,9 @@ jobs:
         run: npm run build
         working-directory: public-site
 
+      - name: Create .nojekyll
+        run: touch public-site/out/.nojekyll
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
