@@ -45,7 +45,8 @@ next-env.d.ts
 /uploads/*
 !/uploads/.gitkeep
 
-# public site（data 和 public/uploads 需要提交供 Actions 构建；out 由 Actions 构建，不提交）
+# public site（app/*.json 和 public/uploads 需要提交供 Actions 构建；out 由 Actions 构建，不提交）
 /public-site/node_modules
 /public-site/.next
 /public-site/out
+/public-site/data

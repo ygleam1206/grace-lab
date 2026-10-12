@@ -1,7 +1,7 @@
-import fs from "fs";
-import path from "path";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import notesData from "../../notes.json";
+import categoriesData from "../../categories.json";
 
 interface Note {
   id: number;
@@ -15,26 +15,18 @@ interface Category {
   cover_image: string;
 }
 
-function getData(categoryName: string) {
-  const dataDir = path.join(process.cwd(), "data");
-  const notes: Note[] = JSON.parse(fs.readFileSync(path.join(dataDir, "notes.json"), "utf-8"));
-  const categories: Category[] = JSON.parse(fs.readFileSync(path.join(dataDir, "categories.json"), "utf-8"));
-
-  const category = categories.find((c) => c.name === categoryName);
-  const categoryNotes = notes.filter((n) => n.category === categoryName);
-
-  return { category, categoryNotes };
-}
+const categories = categoriesData as Category[];
+const notes = notesData as Note[];
 
 export function generateStaticParams() {
-  const dataDir = path.join(process.cwd(), "data");
-  const categories: Category[] = JSON.parse(fs.readFileSync(path.join(dataDir, "categories.json"), "utf-8"));
   return categories.map((cat) => ({ name: cat.name }));
 }
 
-export default function CategoryPage({ params }: { params: { name: string } }) {
-  const categoryName = decodeURIComponent(params.name);
-  const { category, categoryNotes } = getData(categoryName);
+export default async function CategoryPage({ params }: { params: Promise<{ name: string }> }) {
+  const { name } = await params;
+  const categoryName = decodeURIComponent(name);
+  const category = categories.find((c) => c.name === categoryName);
+  const categoryNotes = notes.filter((n) => n.category === categoryName);
 
   if (!category) {
     notFound();

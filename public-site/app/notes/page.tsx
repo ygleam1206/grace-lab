@@ -1,6 +1,5 @@
-import fs from "fs";
-import path from "path";
 import Link from "next/link";
+import notesData from "../notes.json";
 
 interface Note {
   id: number;
@@ -11,15 +10,9 @@ interface Note {
   updated_at: string;
 }
 
-function getData() {
-  const dataDir = path.join(process.cwd(), "data");
-  const notes: Note[] = JSON.parse(fs.readFileSync(path.join(dataDir, "notes.json"), "utf-8"));
-  return notes;
-}
+const notes = notesData as Note[];
 
 export default function NotesPage() {
-  const notes = getData();
-
   return (
     <div>
       <h1 className="text-3xl font-bold mb-8">全部笔记</h1>

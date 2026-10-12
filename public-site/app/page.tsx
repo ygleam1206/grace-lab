@@ -1,6 +1,6 @@
-import fs from "fs";
-import path from "path";
 import Link from "next/link";
+import notesData from "./notes.json";
+import categoriesData from "./categories.json";
 
 interface Note {
   id: number;
@@ -16,10 +16,10 @@ interface Category {
   cover_image: string;
 }
 
+const notes = notesData as Note[];
+const categories = categoriesData as Category[];
+
 function getData() {
-  const dataDir = path.join(process.cwd(), "data");
-  const notes: Note[] = JSON.parse(fs.readFileSync(path.join(dataDir, "notes.json"), "utf-8"));
-  const categories: Category[] = JSON.parse(fs.readFileSync(path.join(dataDir, "categories.json"), "utf-8"));
   return { notes, categories };
 }
 

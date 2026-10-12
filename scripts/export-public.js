@@ -3,7 +3,7 @@
  * 公开站点数据导出脚本
  *
  * 从 SQLite 数据库导出标记为公开的笔记、分类和图片，
- * 生成 public-site/data/ 下的 JSON 文件和图片副本。
+ * 生成 public-site/app/ 下的 JSON 文件和 public-site/public/uploads/ 下的图片副本。
  *
  * 使用方式：node scripts/export-public.js
  */
@@ -20,11 +20,10 @@ const UPLOAD_DIR = process.env.BLOG_DATA_DIR
   ? path.join(process.env.BLOG_DATA_DIR, "uploads")
   : path.join(PROJECT_ROOT, "uploads");
 const PUBLIC_SITE_DIR = path.join(PROJECT_ROOT, "public-site");
-const EXPORT_DATA_DIR = path.join(PUBLIC_SITE_DIR, "data");
+const EXPORT_DATA_DIR = path.join(PUBLIC_SITE_DIR, "app");
 const EXPORT_UPLOADS_DIR = path.join(PUBLIC_SITE_DIR, "public", "uploads");
 
 // 确保输出目录存在
-fs.mkdirSync(EXPORT_DATA_DIR, { recursive: true });
 // 清理旧的公开图片目录（避免未引用的旧图片残留）
 if (fs.existsSync(EXPORT_UPLOADS_DIR)) {
   fs.rmSync(EXPORT_UPLOADS_DIR, { recursive: true, force: true });
@@ -106,19 +105,6 @@ fs.writeFileSync(
 fs.writeFileSync(
   path.join(EXPORT_DATA_DIR, "categories.json"),
   JSON.stringify(categories, null, 2)
-);
-
-// 生成站点元数据
-const metadata = {
-  generatedAt: new Date().toISOString(),
-  noteCount: notes.length,
-  categoryCount: categories.length,
-  imageCount: copiedImages,
-};
-
-fs.writeFileSync(
-  path.join(EXPORT_DATA_DIR, "metadata.json"),
-  JSON.stringify(metadata, null, 2)
 );
 
 db.close();

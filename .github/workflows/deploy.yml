@@ -4,9 +4,9 @@ on:
   push:
     branches: [main]
     paths:
-      - "public-site/data/**"
       - "public-site/public/uploads/**"
       - "public-site/app/**"
+      - "public-site/postcss.config.mjs"
       - "public-site/next.config.js"
       - "public-site/package.json"
       - "public-site/package-lock.json"
@@ -44,8 +44,8 @@ jobs:
         run: npm run build
         working-directory: public-site
 
-      - name: Copy .nojekyll to out
-        run: cp .nojekyll public-site/out/.nojekyll
+      - name: Create .nojekyll
+        run: touch public-site/out/.nojekyll
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

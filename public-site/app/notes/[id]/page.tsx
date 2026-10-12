@@ -1,7 +1,6 @@
-import fs from "fs";
-import path from "path";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import notesData from "../../notes.json";
 
 interface Note {
   id: number;
@@ -12,20 +11,19 @@ interface Note {
   updated_at: string;
 }
 
+const notes = notesData as Note[];
+
 function getNote(id: string): Note | undefined {
-  const dataDir = path.join(process.cwd(), "data");
-  const notes: Note[] = JSON.parse(fs.readFileSync(path.join(dataDir, "notes.json"), "utf-8"));
   return notes.find((n) => n.id === Number(id));
 }
 
 export function generateStaticParams() {
-  const dataDir = path.join(process.cwd(), "data");
-  const notes: Note[] = JSON.parse(fs.readFileSync(path.join(dataDir, "notes.json"), "utf-8"));
   return notes.map((note) => ({ id: String(note.id) }));
 }
 
-export default function NotePage({ params }: { params: { id: string } }) {
-  const note = getNote(params.id);
+export default async function NotePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const note = getNote(id);
 
   if (!note) {
     notFound();

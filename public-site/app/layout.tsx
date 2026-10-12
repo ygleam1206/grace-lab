@@ -1,3 +1,5 @@
+import "./globals.css";
+
 const BASE_PATH = "/grace-lab";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

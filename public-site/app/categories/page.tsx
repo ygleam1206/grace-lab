@@ -1,6 +1,6 @@
-import fs from "fs";
-import path from "path";
 import Link from "next/link";
+import notesData from "../notes.json";
+import categoriesData from "../categories.json";
 
 interface Category {
   name: string;
@@ -13,11 +13,10 @@ interface Note {
   category: string;
 }
 
-function getData() {
-  const dataDir = path.join(process.cwd(), "data");
-  const categories: Category[] = JSON.parse(fs.readFileSync(path.join(dataDir, "categories.json"), "utf-8"));
-  const notes: Note[] = JSON.parse(fs.readFileSync(path.join(dataDir, "notes.json"), "utf-8"));
+const categories = categoriesData as Category[];
+const notes = notesData as Note[];
 
+export default function CategoriesPage() {
   // 计算每个分类的笔记数量
   const noteCounts = notes.reduce((acc, note) => {
     if (note.category) {
@@ -25,12 +24,6 @@ function getData() {
     }
     return acc;
   }, {} as Record<string, number>);
-
-  return { categories, noteCounts };
-}
-
-export default function CategoriesPage() {
-  const { categories, noteCounts } = getData();
 
   return (
     <div>
