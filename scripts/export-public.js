@@ -37,22 +37,35 @@ console.log("📦 开始导出公开站点数据...");
 console.log(`   数据库: ${DB_PATH}`);
 console.log(`   输出目录: ${EXPORT_DATA_DIR}`);
 
-// 导出公开笔记
+// 导出公开笔记（含标签）
 const notes = db.prepare(`
-  SELECT id, title, content, category, created_at, updated_at
-  FROM notes
-  WHERE is_public = 1
-  ORDER BY created_at DESC
+  SELECT n.id, n.title, n.content, n.category,
+    GROUP_CONCAT(t.name) as tags,
+    n.created_at, n.updated_at
+  FROM notes n
+  LEFT JOIN note_tags nt ON n.id = nt.note_id
+  LEFT JOIN tags t ON nt.tag_id = t.id
+  WHERE n.is_public = 1
+  GROUP BY n.id
+  ORDER BY n.created_at DESC
 `).all();
+
+// 将 tags 字符串转为数组
+for (const note of notes) {
+  note.tags = note.tags ? note.tags.split(",") : [];
+}
 
 console.log(`   公开笔记: ${notes.length} 篇`);
 
-// 导出公开分类（只包含有公开笔记的分类）
+// 导出公开分类（含 id、封面、笔记数）
 const publicCategories = [...new Set(notes.map((n) => n.category).filter(Boolean))];
 const categories = db.prepare(`
-  SELECT name, cover_image
-  FROM note_categories
-  WHERE name IN (${publicCategories.map(() => "?").join(",")})
+  SELECT nc.id, nc.name, nc.cover_image,
+    COUNT(n.id) as note_count
+  FROM note_categories nc
+  LEFT JOIN notes n ON n.category = nc.name AND n.is_public = 1
+  WHERE nc.name IN (${publicCategories.map(() => "?").join(",")})
+  GROUP BY nc.id
 `).all(...publicCategories);
 
 console.log(`   公开分类: ${categories.length} 个`);
@@ -94,6 +107,15 @@ for (const cat of categories) {
       fs.copyFileSync(srcPath, destPath);
     }
   }
+}
+
+// 复制 hero 图片
+const HERO_SRC = path.join(PROJECT_ROOT, "public", "images", "hero.png");
+const HERO_DEST_DIR = path.join(PUBLIC_SITE_DIR, "public", "images");
+if (fs.existsSync(HERO_SRC)) {
+  fs.mkdirSync(HERO_DEST_DIR, { recursive: true });
+  fs.copyFileSync(HERO_SRC, path.join(HERO_DEST_DIR, "hero.png"));
+  console.log("   复制 hero 图片: 1 张");
 }
 
 // 写入 JSON 数据文件

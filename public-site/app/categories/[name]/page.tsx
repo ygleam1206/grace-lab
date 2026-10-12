@@ -1,18 +1,26 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArrowLeft, FolderOpen } from "lucide-react";
+import NoteCard from "@/components/NoteCard";
 import notesData from "../../notes.json";
 import categoriesData from "../../categories.json";
+
+const BASE_PATH = "/grace-lab";
 
 interface Note {
   id: number;
   title: string;
+  content: string;
   category: string;
+  tags: string[];
   created_at: string;
+  updated_at: string;
 }
 
 interface Category {
+  id: number;
   name: string;
   cover_image: string;
+  note_count: number;
 }
 
 const categories = categoriesData as Category[];
@@ -34,32 +42,30 @@ export default async function CategoryPage({ params }: { params: Promise<{ name:
 
   return (
     <div>
-      <Link href="/categories" className="text-sm text-blue-600 hover:text-blue-800 mb-4 inline-block">
-        ← 返回分类列表
-      </Link>
+      <a
+        href="/grace-lab/notes"
+        className="flex items-center gap-2 text-white/60 hover:text-white transition-colors mb-6 text-sm"
+      >
+        <ArrowLeft size={16} />
+        返回知识库
+      </a>
 
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">{category.name}</h1>
-        <p className="text-gray-500">{categoryNotes.length} 篇笔记</p>
-      </header>
+      <div className="flex items-center gap-3 mb-8">
+        <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
+          <FolderOpen size={20} className="text-white/70" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-bold">{categoryName}</h1>
+          <p className="text-sm text-white/50">{categoryNotes.length} 篇笔记</p>
+        </div>
+      </div>
 
       {categoryNotes.length === 0 ? (
-        <p className="text-gray-500 text-center py-8">该分类下暂无笔记</p>
+        <div className="text-center text-white/50 py-20">该分类下还没有笔记</div>
       ) : (
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {categoryNotes.map((note) => (
-            <Link
-              key={note.id}
-              href={`/notes/${note.id}`}
-              className="block bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow"
-            >
-              <div className="flex items-start justify-between">
-                <h2 className="text-xl font-semibold text-gray-900">{note.title}</h2>
-                <time className="text-sm text-gray-400 whitespace-nowrap ml-4">
-                  {new Date(note.created_at).toLocaleDateString("zh-CN")}
-                </time>
-              </div>
-            </Link>
+            <NoteCard key={note.id} {...note} />
           ))}
         </div>
       )}

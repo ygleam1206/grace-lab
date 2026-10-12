@@ -1,12 +1,16 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArrowLeft, FolderOpen, Calendar } from "lucide-react";
+import GlassCard from "@/components/GlassCard";
 import notesData from "../../notes.json";
+
+const BASE_PATH = "/grace-lab";
 
 interface Note {
   id: number;
   title: string;
   content: string;
   category: string;
+  tags: string[];
   created_at: string;
   updated_at: string;
 }
@@ -21,7 +25,7 @@ export function generateStaticParams() {
   return notes.map((note) => ({ id: String(note.id) }));
 }
 
-export default async function NotePage({ params }: { params: Promise<{ id: string }> }) {
+export default async function NoteDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const note = getNote(id);
 
@@ -29,38 +33,47 @@ export default async function NotePage({ params }: { params: Promise<{ id: strin
     notFound();
   }
 
-  // 为图片路径添加 basePath 前缀
   const contentWithBasePath = note.content.replace(
     /src="\/uploads\//g,
-    'src="/grace-lab/uploads/'
+    `src="/grace-lab/uploads/`
   );
 
   return (
-    <article>
-      <Link href="/notes" className="text-sm text-blue-600 hover:text-blue-800 mb-4 inline-block">
-        ← 返回笔记列表
-      </Link>
+    <div>
+      <a
+        href="/grace-lab/notes"
+        className="flex items-center gap-1 text-white/60 hover:text-white mb-6 transition-colors"
+      >
+        <ArrowLeft size={16} /> 返回列表
+      </a>
 
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold mb-4">{note.title}</h1>
-        <div className="flex items-center gap-4 text-sm text-gray-500">
-          {note.category && (
-            <Link
-              href={`/categories/${encodeURIComponent(note.category)}`}
-              className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded hover:bg-blue-200"
-            >
-              {note.category}
-            </Link>
-          )}
-          <time>创建于 {new Date(note.created_at).toLocaleDateString("zh-CN")}</time>
-          <time>更新于 {new Date(note.updated_at).toLocaleDateString("zh-CN")}</time>
+      <GlassCard className="mb-6">
+        <div>
+          <h1 className="text-3xl font-bold mb-3">{note.title}</h1>
+          <div className="flex items-center gap-4 text-sm text-white/50">
+            {note.category && (
+              <span className="flex items-center gap-1">
+                <FolderOpen size={14} /> {note.category}
+              </span>
+            )}
+            {note.tags && note.tags.length > 0 && (
+              <span className="flex items-center gap-1">
+                ️ {note.tags.join(", ")}
+              </span>
+            )}
+            <span className="flex items-center gap-1">
+              <Calendar size={14} /> {new Date(note.created_at).toLocaleDateString("zh-CN")}
+            </span>
+          </div>
         </div>
-      </header>
+      </GlassCard>
 
-      <div
-        className="prose prose-gray max-w-none"
-        dangerouslySetInnerHTML={{ __html: contentWithBasePath }}
-      />
-    </article>
+      <GlassCard>
+        <div
+          className="prose max-w-none"
+          dangerouslySetInnerHTML={{ __html: contentWithBasePath }}
+        />
+      </GlassCard>
+    </div>
   );
 }
