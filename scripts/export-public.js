@@ -25,6 +25,10 @@ const EXPORT_UPLOADS_DIR = path.join(PUBLIC_SITE_DIR, "public", "uploads");
 
 // 确保输出目录存在
 fs.mkdirSync(EXPORT_DATA_DIR, { recursive: true });
+// 清理旧的公开图片目录（避免未引用的旧图片残留）
+if (fs.existsSync(EXPORT_UPLOADS_DIR)) {
+  fs.rmSync(EXPORT_UPLOADS_DIR, { recursive: true, force: true });
+}
 fs.mkdirSync(EXPORT_UPLOADS_DIR, { recursive: true });
 
 // 打开数据库
