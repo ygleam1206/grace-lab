@@ -27,24 +27,6 @@
     "updated_at": "2026-10-12 09:18:55"
   },
   {
-    "id": 5,
-    "title": "test2",
-    "content": "<p>test2</p>",
-    "category": "",
-    "tags": [],
-    "created_at": "2026-10-12 03:44:39",
-    "updated_at": "2026-10-12 03:44:39"
-  },
-  {
-    "id": 4,
-    "title": "test",
-    "content": "<p>test</p>",
-    "category": "",
-    "tags": [],
-    "created_at": "2026-10-12 03:44:13",
-    "updated_at": "2026-10-12 03:44:13"
-  },
-  {
     "id": 3,
     "title": "LangChain介绍",
     "content": "<h1><strong>一、LangChain</strong></h1><p>1.大语言模型的局限性</p><ul><li><p>知识受限于训练数据</p></li><li><p>无法直接与外部系统交互（查询实时数据、调用api或者读取数据库）</p></li><li><p>不具备状态保持能力（难以进行连贯的多轮对话，遗忘之前的上下文）</p></li></ul><p></p><p>2.LangChain（Language + chain）框架的定位</p><p></p><p>LangChain作为大模型和应用的中间层，可统一调用各类大模型，管理提示词与上下文，还能继承外部工具和数据源，快速搭建具备推理行动能力的智能体</p><p></p><p>总的来说就是可以帮你把 Agent 开发里重复、通用的底层调度逻辑全部封装好</p><p></p><p>3.LangChain应用场景</p><ul><li><p>检索增强生成（RAG）</p></li><li><p>多模态应用开发</p></li></ul><p></p><p><strong>LangGraph</strong></p><p>LangGraph <strong>是 LangChain 团队出的、专门解决复杂 Agent 流程的扩展库</strong>，依然是 Python 库，可以实现多agent。</p><img src=\"/uploads/1791525375745-jupx4n-微信图片_20261009110203_1103_4.jpg\" alt=\"微信图片_20261009110203_1103_4.jpg\"><p>对比：</p><p><strong>LangChain：适合简单 Agent，偏向【线性单循环】</strong>，一轮一轮顺序执行 ReAct。流程是一条直线，分支、暂停、多 Agent 协作很难写。</p><p><strong>LangGraph：用【图（Graph）】来定义 Agent 流程</strong>。可以画流程图：不同条件走不同分支、可以暂停、支持多智能体来回对话、循环、断点保存。</p><p></p>",
