@@ -6,6 +6,7 @@ on:
     paths:
       - "public-site/public/uploads/**"
       - "public-site/app/**"
+      - "public-site/components/**"
       - "public-site/postcss.config.mjs"
       - "public-site/next.config.js"
       - "public-site/package.json"
