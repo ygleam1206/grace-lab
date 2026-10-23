@@ -7,18 +7,22 @@ interface LiveDateProps {
 }
 
 export default function LiveDate({ noteCount }: LiveDateProps) {
-  const [now, setNow] = useState(() => new Date());
+  // 初始为 null，挂载后再取当前时间，避免服务端/客户端渲染不一致（hydration 报错）
+  const [now, setNow] = useState<Date | null>(null);
 
   useEffect(() => {
+    setNow(new Date());
     const timer = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
-  const day = String(now.getDate()).padStart(2, "0");
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const year = now.getFullYear();
-  const weekday = now.toLocaleDateString("en-US", { weekday: "short" }).toUpperCase();
-  const time = now.toLocaleTimeString("en-GB", { hour12: false });
+  const day = now ? String(now.getDate()).padStart(2, "0") : "--";
+  const month = now ? String(now.getMonth() + 1).padStart(2, "0") : "--";
+  const year = now ? String(now.getFullYear()) : "----";
+  const weekday = now
+    ? now.toLocaleDateString("en-US", { weekday: "short" }).toUpperCase()
+    : "---";
+  const time = now ? now.toLocaleTimeString("en-GB", { hour12: false }) : "--:--:--";
 
   return (
     <div className="flex flex-row order-2 items-start justify-between gap-6 lg:flex-col lg:order-3 lg:justify-start lg:h-full">

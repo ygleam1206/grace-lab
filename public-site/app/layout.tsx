@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
-import SimplexNoiseBg from "@/components/SimplexNoiseBg";
+import SiteBackground from "@/components/SiteBackground";
 
 export const metadata: Metadata = {
   title: "Grace's Blog",
@@ -16,7 +16,7 @@ export default function RootLayout({
   return (
     <html lang="zh-CN">
       <body>
-        <SimplexNoiseBg />
+        <SiteBackground />
         <Navbar />
         <main className="max-w-6xl mx-auto px-4 py-8 relative z-10">{children}</main>
       </body>

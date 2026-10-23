@@ -1,0 +1,7 @@
+/* MicroSlats 容器：填满父级，canvas 由组件内部插入并铺满 */
+.micro-slats {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
