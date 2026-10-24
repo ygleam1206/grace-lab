@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@tiptap/extension-color": "^3.31.4",
+    "@tiptap/extension-highlight": "^3.31.4",
     "@tiptap/extension-image": "^3.31.4",
     "@tiptap/extension-placeholder": "^3.31.4",
     "@tiptap/extension-text-style": "^3.31.4",
@@ -36,6 +37,7 @@
     "remark": "^15.0.1",
     "remark-gfm": "^4.0.1",
     "remark-html": "^15.0.1",
+    "sanitize-html": "^2.18.1",
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
@@ -45,6 +47,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/sanitize-html": "^2.16.2",
     "eslint": "^9",
     "eslint-config-next": "16.2.1",
     "tailwindcss": "^4",

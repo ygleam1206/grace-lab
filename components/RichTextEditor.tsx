@@ -3,9 +3,11 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
-import Underline from "@tiptap/extension-underline";
 import Placeholder from "@tiptap/extension-placeholder";
 import { TextStyle } from "@tiptap/extension-text-style";
+import { Color } from "@tiptap/extension-color";
+import { Highlight } from "@tiptap/extension-highlight";
+import { InlineStyles, BlockStyles } from "@/lib/tiptap-inline-styles";
 import {
   Bold,
   Italic,
@@ -21,6 +23,9 @@ import {
   Heading2,
   Heading3,
   Pilcrow,
+  Link2,
+  Eraser,
+  Highlighter,
 } from "lucide-react";
 import { useRef, useState, useCallback } from "react";
 
@@ -28,6 +33,18 @@ interface RichTextEditorProps {
   content: string;
   onChange: (html: string) => void;
 }
+
+const FONT_SIZES = [
+  { label: "默认字号", value: "" },
+  { label: "12px", value: "12px" },
+  { label: "14px", value: "14px" },
+  { label: "16px", value: "16px" },
+  { label: "18px", value: "18px" },
+  { label: "20px", value: "20px" },
+  { label: "24px", value: "24px" },
+  { label: "28px", value: "28px" },
+  { label: "36px", value: "36px" },
+];
 
 // 工具栏按钮配置
 const toolbarButtons: Array<{
@@ -48,6 +65,7 @@ const toolbarButtons: Array<{
   { icon: List, action: "bulletList", title: "无序列表", active: "bulletList" },
   { icon: ListOrdered, action: "orderedList", title: "有序列表", active: "orderedList" },
   { icon: Quote, action: "blockquote", title: "块引用", active: "blockquote" },
+  { icon: Link2, action: "link", title: "插入链接" },
   { icon: Undo, action: "undo", title: "撤销" },
   { icon: Redo, action: "redo", title: "重做" },
 ];
@@ -57,18 +75,32 @@ export default function RichTextEditor({ content, onChange }: RichTextEditorProp
   const [uploading, setUploading] = useState(false);
 
   const editor = useEditor({
+    // 工具栏的激活态/字号/颜色依赖每次事务后的重新渲染
+    shouldRerenderOnTransaction: true,
     extensions: [
       StarterKit.configure({
         heading: { levels: [1, 2, 3] },
+        // StarterKit v3 已内置 Link / Underline，这里只做链接行为配置
+        link: {
+          openOnClick: false,
+          autolink: true,
+          HTMLAttributes: {
+            rel: "noopener noreferrer",
+            target: "_blank",
+          },
+        },
       }),
-      Underline,
       TextStyle,
+      InlineStyles,
+      BlockStyles,
+      Color,
+      Highlight.configure({ multicolor: true }),
       Image.configure({
         inline: false,
         allowBase64: false,
       }),
       Placeholder.configure({
-        placeholder: "开始写笔记...",
+        placeholder: "开始写笔记，或直接粘贴富文本内容...",
       }),
     ],
     content: content || "<p></p>",
@@ -200,6 +232,17 @@ export default function RichTextEditor({ content, onChange }: RichTextEditorProp
       case "blockquote":
         chain.toggleBlockquote().run();
         break;
+      case "link": {
+        const previous = editor.getAttributes("link").href as string | undefined;
+        const url = window.prompt("链接地址：", previous || "https://");
+        if (url === null) break;
+        if (url === "") {
+          chain.extendMarkRange("link").unsetLink().run();
+        } else {
+          chain.extendMarkRange("link").setLink({ href: url }).run();
+        }
+        break;
+      }
       case "undo":
         chain.undo().run();
         break;
@@ -207,6 +250,18 @@ export default function RichTextEditor({ content, onChange }: RichTextEditorProp
         chain.redo().run();
         break;
     }
+  };
+
+  // 清除行内样式（颜色 / 背景色 / 字号）
+  const handleClearInlineStyles = () => {
+    if (!editor) return;
+    editor
+      .chain()
+      .focus()
+      .unsetColor()
+      .unsetBackgroundColor()
+      .unsetFontSize()
+      .run();
   };
 
   // 检查按钮是否激活
@@ -239,11 +294,18 @@ export default function RichTextEditor({ content, onChange }: RichTextEditorProp
     return null;
   }
 
+  const textStyleAttrs = editor.getAttributes("textStyle") as {
+    color?: string;
+    backgroundColor?: string;
+    fontSize?: string;
+  };
+  const currentFontSize = textStyleAttrs.fontSize || "";
+
   return (
     <div className="border border-white/20 rounded-xl overflow-hidden bg-white/5">
       {/* 工具栏 */}
       <div className="flex flex-wrap items-center gap-1 px-3 py-2 border-b border-white/10 bg-white/5">
-        {toolbarButtons.map((btn, index) => {
+        {toolbarButtons.map((btn) => {
           const Icon = btn.icon;
           const active = isActive(btn.active, btn.attrs);
 
@@ -263,6 +325,79 @@ export default function RichTextEditor({ content, onChange }: RichTextEditorProp
             </button>
           );
         })}
+
+        <span className="w-px h-5 bg-white/15 mx-1" />
+
+        {/* 字号选择 */}
+        <select
+          value={currentFontSize}
+          onChange={(e) => {
+            const size = e.target.value;
+            if (size) {
+              editor.chain().focus().setFontSize(size).run();
+            } else {
+              editor.chain().focus().unsetFontSize().run();
+            }
+          }}
+          className="bg-white/10 border border-white/20 rounded-lg px-2 py-1.5 text-xs text-white/80 focus:outline-none focus:border-white/40 [&>option]:bg-[#1e1e2e]"
+          title="字号"
+        >
+          {FONT_SIZES.map((size) => (
+            <option key={size.value} value={size.value}>
+              {size.label}
+            </option>
+          ))}
+        </select>
+
+        {/* 文字颜色 */}
+        <label
+          className="relative flex items-center gap-1 p-2 rounded-lg text-white/60 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
+          title="文字颜色"
+        >
+          <span className="text-sm font-semibold leading-none">A</span>
+          <span
+            className="w-3.5 h-1.5 rounded-sm border border-white/30"
+            style={{ backgroundColor: textStyleAttrs.color || "#ffffff" }}
+          />
+          <input
+            type="color"
+            value={textStyleAttrs.color || "#ffffff"}
+            onChange={(e) => editor.chain().focus().setColor(e.target.value).run()}
+            className="absolute inset-0 opacity-0 cursor-pointer"
+          />
+        </label>
+
+        {/* 背景颜色 */}
+        <label
+          className="relative p-2 rounded-lg text-white/60 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
+          title="背景颜色"
+        >
+          <Highlighter size={18} />
+          <span
+            className="absolute left-1.5 right-1.5 bottom-1 h-1 rounded-sm"
+            style={{ backgroundColor: textStyleAttrs.backgroundColor || "#facc15" }}
+          />
+          <input
+            type="color"
+            value={textStyleAttrs.backgroundColor || "#facc15"}
+            onChange={(e) =>
+              editor.chain().focus().setBackgroundColor(e.target.value).run()
+            }
+            className="absolute inset-0 opacity-0 cursor-pointer"
+          />
+        </label>
+
+        {/* 清除行内样式 */}
+        <button
+          type="button"
+          onClick={handleClearInlineStyles}
+          className="p-2 rounded-lg text-white/60 hover:bg-white/10 hover:text-white transition-colors"
+          title="清除文字颜色/背景色/字号"
+        >
+          <Eraser size={18} />
+        </button>
+
+        <span className="w-px h-5 bg-white/15 mx-1" />
 
         {/* 图片上传按钮 */}
         <button

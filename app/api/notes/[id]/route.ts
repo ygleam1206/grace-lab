@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
+import { sanitizeNoteContent } from "@/lib/sanitize";
 
 // GET /api/notes/[id] — 获取单个笔记
 export async function GET(
@@ -54,7 +55,7 @@ export async function PUT(
 
   db.prepare(
     "UPDATE notes SET title = ?, content = ?, category = ?, is_public = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?"
-  ).run(title, content, category ?? "", is_public ? 1 : 0, id);
+  ).run(title, sanitizeNoteContent(content ?? ""), category ?? "", is_public ? 1 : 0, id);
 
   // 重新处理标签
   if (tags) {

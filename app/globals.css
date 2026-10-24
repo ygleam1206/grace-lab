@@ -187,6 +187,32 @@ body {
   background: none;
   padding: 0;
 }
+.prose mark {
+  background-color: rgba(250, 204, 21, 0.4);
+  color: inherit;
+  padding: 0.05em 0.15em;
+  border-radius: 3px;
+}
+.prose hr {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  margin: 2em 0;
+}
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5em 0;
+}
+.prose th,
+.prose td {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.5em 0.75em;
+  text-align: left;
+}
+.prose th {
+  background: rgba(255, 255, 255, 0.1);
+  font-weight: 600;
+}
 
 /* Tiptap 编辑器样式 */
 .tiptap {

@@ -127,6 +127,12 @@ body {
   background: none;
   padding: 0;
 }
+.prose mark {
+  background-color: rgba(250, 204, 21, 0.4);
+  color: inherit;
+  padding: 0.05em 0.15em;
+  border-radius: 3px;
+}
 .prose hr {
   border: none;
   border-top: 1px solid rgba(255, 255, 255, 0.2);

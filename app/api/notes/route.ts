@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
+import { sanitizeNoteContent } from "@/lib/sanitize";
 
 // GET /api/notes — 获取笔记列表（支持搜索、分类、标签筛选）
 export async function GET(request: NextRequest) {
@@ -69,7 +70,7 @@ export async function POST(request: NextRequest) {
   const db = getDb();
   const result = db.prepare(
     "INSERT INTO notes (title, content, category, is_public) VALUES (?, ?, ?, ?)"
-  ).run(title, content, category, is_public ? 1 : 0);
+  ).run(title, sanitizeNoteContent(content), category, is_public ? 1 : 0);
 
   const noteId = result.lastInsertRowid as number;
 
