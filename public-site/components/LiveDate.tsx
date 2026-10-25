@@ -25,7 +25,7 @@ export default function LiveDate({ noteCount }: LiveDateProps) {
   const time = now ? now.toLocaleTimeString("en-GB", { hour12: false }) : "--:--:--";
 
   return (
-    <div className="flex flex-row order-2 items-start justify-between gap-6 lg:flex-col lg:order-3 lg:justify-start lg:h-full">
+    <div className="flex flex-row items-start justify-between gap-6 lg:flex-col lg:justify-start">
       {/* 实时日期 */}
       <div>
         <p className="text-xs text-white/40 tracking-[0.25em] uppercase">Local Time</p>
@@ -41,7 +41,7 @@ export default function LiveDate({ noteCount }: LiveDateProps) {
       </div>
 
       {/* 笔记数 */}
-      <div className="lg:mt-auto">
+      <div className="lg:mt-8">
         <p className="text-xs text-white/40 tracking-[0.25em] uppercase">Notes</p>
         <p className="text-sm text-white/70 mt-3">
           {String(noteCount).padStart(2, "0")} 篇公开笔记

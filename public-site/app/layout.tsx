@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import SiteBackground from "@/components/SiteBackground";
+import MusicPlayer from "@/components/MusicPlayer";
 
 export const metadata: Metadata = {
   title: "Grace's Blog",
@@ -18,6 +19,7 @@ export default function RootLayout({
       <body>
         <SiteBackground />
         <Navbar />
+        <MusicPlayer />
         <main className="max-w-6xl mx-auto px-4 py-8 relative z-10">{children}</main>
       </body>
     </html>
