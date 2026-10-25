@@ -12,7 +12,7 @@ export default function HeroTitle() {
   const titleSize = { fontSize: "clamp(2.8rem, 4vw, 4.6rem)", letterSpacing: "-0.04em" };
 
   return (
-    <div className="flex flex-col order-1 lg:h-full">
+    <div className="flex flex-col">
       {/* 顶部小字 */}
       <div>
         <p className="text-xs text-white/40 tracking-widest">个人知识库</p>
