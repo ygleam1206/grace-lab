@@ -8,8 +8,8 @@ export default function HeroTitle() {
   const line1 = words[0] || title;
   const line2 = words.slice(1).join(" ") || "";
 
-  const titleStyle = "font-bold italic text-white leading-none";
-  const titleSize = { fontSize: "clamp(2.8rem, 4vw, 4.6rem)", letterSpacing: "-0.04em" };
+  const titleStyle = "font-bold italic text-white leading-none whitespace-nowrap";
+  const titleSize = { fontSize: "clamp(4.2rem, 6vw, 6.9rem)", letterSpacing: "-0.04em" };
 
   return (
     <div className="flex flex-col">
