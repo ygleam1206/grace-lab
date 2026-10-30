@@ -16,7 +16,7 @@ export default function HeroTitle() {
     <div className="relative mb-16 pt-8 pb-4">
       {/* 右上角小字 */}
       <div className="absolute top-0 right-0 text-right">
-        <p className="text-xs text-white/40 tracking-widest">个人知识库</p>
+        <p className="text-xs text-white/40 tracking-widest">文章</p>
         <p className="text-xs text-white/50 tracking-[0.2em] uppercase mt-0.5">
           {siteConfig.authorName}
         </p>
