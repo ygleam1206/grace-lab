@@ -118,6 +118,17 @@ if (fs.existsSync(HERO_SRC)) {
   console.log("   复制 hero 图片: 1 张");
 }
 
+// 同步照片墙：扫描 public-site/public/images/photos 下的图片，生成 photos.json
+const PHOTOS_DIR = path.join(PUBLIC_SITE_DIR, "public", "images", "photos");
+fs.mkdirSync(PHOTOS_DIR, { recursive: true });
+const PHOTO_EXTS = /\.(?:jpg|jpeg|png|gif|webp|avif)$/i;
+const photoFiles = fs
+  .readdirSync(PHOTOS_DIR)
+  .filter((file) => PHOTO_EXTS.test(file) && !file.startsWith("."))
+  .sort((a, b) => a.localeCompare(b, "zh-CN"));
+
+console.log(`   照片墙: ${photoFiles.length} 张`);
+
 // 写入 JSON 数据文件
 fs.writeFileSync(
   path.join(EXPORT_DATA_DIR, "notes.json"),
@@ -127,6 +138,11 @@ fs.writeFileSync(
 fs.writeFileSync(
   path.join(EXPORT_DATA_DIR, "categories.json"),
   JSON.stringify(categories, null, 2)
+);
+
+fs.writeFileSync(
+  path.join(EXPORT_DATA_DIR, "photos.json"),
+  JSON.stringify(photoFiles, null, 2)
 );
 
 db.close();

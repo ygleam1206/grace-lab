@@ -15,7 +15,7 @@ export default function HeroTitle() {
     <div className="flex flex-col">
       {/* 顶部小字 */}
       <div>
-        <p className="text-xs text-white/40 tracking-widest">个人知识库</p>
+        <p className="text-xs text-white/40 tracking-widest">文章</p>
         <p className="text-xs text-white/50 tracking-[0.2em] uppercase mt-0.5">Grace</p>
       </div>
 
