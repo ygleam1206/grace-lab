@@ -29,11 +29,18 @@ const photos =
 const CARD_SIZE = 200;
 const SPREAD = 85;
 
-// 桌面每行最多 8 张，窄屏（<1024）每行 4 张，超出的换到下一行
-function chunk(list: string[], size: number) {
+// 桌面每行最多 8 张，窄屏（<1024）每行 4 张；超出的换行，各行张数尽量均摊（避免末行只剩一张）
+function chunk(list: string[], maxPerRow: number) {
+  const rowCount = Math.ceil(list.length / maxPerRow);
+  const base = Math.floor(list.length / rowCount);
+  const extra = list.length % rowCount;
+
   const rows: string[][] = [];
-  for (let i = 0; i < list.length; i += size) {
-    rows.push(list.slice(i, i + size));
+  let cursor = 0;
+  for (let i = 0; i < rowCount; i++) {
+    const size = base + (i < extra ? 1 : 0);
+    rows.push(list.slice(cursor, cursor + size));
+    cursor += size;
   }
   return rows;
 }
