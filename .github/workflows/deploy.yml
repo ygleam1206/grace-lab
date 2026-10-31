@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "public-site/public/uploads/**"
+      - "public-site/public/**"
       - "public-site/app/**"
       - "public-site/components/**"
       - "public-site/postcss.config.mjs"
