@@ -22,6 +22,8 @@ interface BounceCardsProps {
   shadow?: boolean;
   enableHover?: boolean;
   className?: string;
+  /** 点击卡片时回调，参数为该行内的索引 */
+  onImageClick?: (index: number) => void;
 }
 
 /**
@@ -47,6 +49,7 @@ export default function BounceCards({
   shadow = true,
   enableHover = true,
   className = "",
+  onImageClick,
 }: BounceCardsProps) {
   const [hovered, setHovered] = useState<number | null>(null);
   const mid = (images.length - 1) / 2;
@@ -83,6 +86,9 @@ export default function BounceCards({
           <motion.div
             key={`${src}-${i}`}
             className="absolute cursor-pointer"
+            role={onImageClick ? "button" : undefined}
+            tabIndex={onImageClick ? 0 : undefined}
+            aria-label={onImageClick ? "查看大图" : undefined}
             style={{
               width: cardSize,
               height: cardSize,
@@ -101,6 +107,14 @@ export default function BounceCards({
             transition={{ type: "spring", bounce: bounciness, duration: 0.55 }}
             onMouseEnter={() => setHovered(i)}
             onMouseLeave={() => setHovered(null)}
+            onClick={() => onImageClick?.(i)}
+            onKeyDown={(event) => {
+              if (!onImageClick) return;
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                onImageClick(i);
+              }
+            }}
           >
             <motion.div
               className="w-full h-full"
