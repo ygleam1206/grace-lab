@@ -45,6 +45,12 @@ next-env.d.ts
 /uploads/*
 !/uploads/.gitkeep
 
+# 照片源文件（只保留在本地，不提交到仓库）
+/public/photos/*
+!/public/photos/.gitkeep
+/public-site/public/images/photos/*
+!/public-site/public/images/photos/.gitkeep
+
 # public site（app/*.json 和 public/uploads 需要提交供 Actions 构建；out 由 Actions 构建，不提交）
 /public-site/node_modules
 /public-site/.next

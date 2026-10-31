@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, FolderOpen, BarChart3, Home } from "lucide-react";
+import { BookOpen, Camera, FolderOpen, BarChart3, Home } from "lucide-react";
 import { siteConfig } from "@/siteConfig";
 
 const navItems = [
   { href: "/", label: "首页", icon: Home },
   { href: "/notes", label: "知识库", icon: BookOpen },
+  { href: "/photo", label: "照片", icon: Camera },
   { href: "/files", label: "文件", icon: FolderOpen },
   { href: "/study", label: "学习", icon: BarChart3 },
 ];

@@ -73,6 +73,17 @@ function initTables(db: Database.Database) {
       duration INTEGER DEFAULT 0,
       status TEXT DEFAULT 'ongoing'
     );
+
+    -- 照片墙：文件名即 public/photos 下的实际文件，地点/心情为后续可编辑的元数据
+    CREATE TABLE IF NOT EXISTS photos (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      filename TEXT NOT NULL UNIQUE,
+      location TEXT DEFAULT '',
+      mood TEXT DEFAULT '',
+      taken_at TEXT DEFAULT '',
+      sort_order INTEGER DEFAULT 0,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
   `);
 
   // 迁移：如果 study_records 缺少 task_id 列，则添加并迁移数据

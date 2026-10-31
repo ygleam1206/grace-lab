@@ -118,16 +118,34 @@ if (fs.existsSync(HERO_SRC)) {
   console.log("   复制 hero 图片: 1 张");
 }
 
-// 同步照片墙：扫描 public-site/public/images/photos 下的图片，生成 photos.json
+// 同步照片墙：以主应用 public/photos 为源，复制到静态站的本地预览目录
+// 照片文件不进仓库，静态站在构建时直接读取该目录，本地能看到图、线上看到提示
+const PHOTO_SOURCE_DIR = path.join(PROJECT_ROOT, "public", "photos");
 const PHOTOS_DIR = path.join(PUBLIC_SITE_DIR, "public", "images", "photos");
 fs.mkdirSync(PHOTOS_DIR, { recursive: true });
 const PHOTO_EXTS = /\.(?:jpg|jpeg|png|gif|webp|avif)$/i;
-const photoFiles = fs
-  .readdirSync(PHOTOS_DIR)
-  .filter((file) => PHOTO_EXTS.test(file) && !file.startsWith("."))
-  .sort((a, b) => a.localeCompare(b, "zh-CN"));
+const photoSourceFiles = fs.existsSync(PHOTO_SOURCE_DIR)
+  ? fs
+      .readdirSync(PHOTO_SOURCE_DIR)
+      .filter((file) => PHOTO_EXTS.test(file) && !file.startsWith("."))
+      .sort((a, b) => a.localeCompare(b, "zh-CN"))
+  : [];
 
-console.log(`   照片墙: ${photoFiles.length} 张`);
+for (const file of photoSourceFiles) {
+  fs.copyFileSync(path.join(PHOTO_SOURCE_DIR, file), path.join(PHOTOS_DIR, file));
+}
+
+// 静态站里已不被引用的照片（源目录删掉的文件）一并清理
+const keep = new Set(photoSourceFiles);
+for (const file of fs.readdirSync(PHOTOS_DIR)) {
+  if (PHOTO_EXTS.test(file) && !keep.has(file)) {
+    fs.unlinkSync(path.join(PHOTOS_DIR, file));
+  }
+}
+
+const photoFiles = photoSourceFiles;
+
+console.log(`   照片墙: ${photoFiles.length} 张（仅本地预览，不提交仓库）`);
 
 // 写入 JSON 数据文件
 fs.writeFileSync(
@@ -138,11 +156,6 @@ fs.writeFileSync(
 fs.writeFileSync(
   path.join(EXPORT_DATA_DIR, "categories.json"),
   JSON.stringify(categories, null, 2)
-);
-
-fs.writeFileSync(
-  path.join(EXPORT_DATA_DIR, "photos.json"),
-  JSON.stringify(photoFiles, null, 2)
 );
 
 db.close();
