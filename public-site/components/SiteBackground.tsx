@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import SimplexNoiseBg from "./SimplexNoiseBg";
 import MicroSlatsBg from "./MicroSlatsBg";
+import { isNoisePage } from "./transitionRules";
 
 /**
  * 全站背景路由切换：
@@ -11,7 +12,6 @@ import MicroSlatsBg from "./MicroSlatsBg";
  */
 export default function SiteBackground() {
   const pathname = usePathname() || "";
-  const isNoisePage = /^\/notes\/\d+\/?$/.test(pathname) || /^\/photo\/?$/.test(pathname);
 
-  return isNoisePage ? <SimplexNoiseBg /> : <MicroSlatsBg />;
+  return isNoisePage(pathname) ? <SimplexNoiseBg /> : <MicroSlatsBg />;
 }

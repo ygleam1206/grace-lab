@@ -6,7 +6,7 @@ import MicroSlats from "./MicroSlats/MicroSlats";
  * 全站背景：MicroSlats 微板条波浪（swell 紫色预设，深色底）
  * 固定满屏置于内容之下，layout 层统一挂载
  */
-export default function MicroSlatsBg() {
+export default function MicroSlatsBg({ intro = true }: { intro?: boolean }) {
   return (
     <div className="fixed inset-0 z-[-10] pointer-events-none">
       <MicroSlats
@@ -24,7 +24,7 @@ export default function MicroSlatsBg() {
         swirl={0}
         trail={1.4}
         lean={0}
-        intro
+        intro={intro}
         scale={1.5}
         speed={0.6}
         direction={250}

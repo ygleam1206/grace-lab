@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { FolderOpen } from "lucide-react";
 
 interface FolderCardProps {
@@ -31,19 +31,16 @@ function getGradient(name: string) {
 }
 
 export default function FolderCard({ id, name, cover_image, note_count, basePath }: FolderCardProps) {
-  const router = useRouter();
   const gradient = getGradient(name);
   const coverUrl = cover_image ? `/uploads/${cover_image}` : "";
 
-  const handleClick = () => {
-    router.push(`/categories/${encodeURIComponent(name)}`);
-  };
-
   return (
     <div className="group relative">
-      <div
-        onClick={handleClick}
-        className="glass cursor-pointer overflow-hidden transition-all hover:-translate-y-1 hover:shadow-lg hover:bg-white/20"
+      {/* 用 <Link> 而不是 router.push：转场需要在点击阶段接管跳转，
+          只有真实的链接元素才能被 PageTransition 拦下来 */}
+      <Link
+        href={`/categories/${encodeURIComponent(name)}`}
+        className="block glass cursor-pointer overflow-hidden transition-all hover:-translate-y-1 hover:shadow-lg hover:bg-white/20"
       >
         <div className="relative aspect-[16/10] overflow-hidden">
           {coverUrl ? (
@@ -64,7 +61,7 @@ export default function FolderCard({ id, name, cover_image, note_count, basePath
           <h3 className="text-base font-semibold truncate">{name}</h3>
           <p className="text-sm text-white/50 mt-0.5">{note_count} 篇笔记</p>
         </div>
-      </div>
+      </Link>
     </div>
   );
 }

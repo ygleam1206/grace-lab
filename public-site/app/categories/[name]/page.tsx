@@ -27,7 +27,11 @@ const categories = categoriesData as Category[];
 const notes = notesData as Note[];
 
 export function generateStaticParams() {
-  return categories.map((cat) => ({ name: cat.name }));
+  // 中文分类名在 dev 模式下会以 URL 编码形式传进来，两种形式都登记，避免 dev 预热时 500
+  return categories.flatMap((cat) => [
+    { name: cat.name },
+    { name: encodeURIComponent(cat.name) },
+  ]);
 }
 
 export default async function CategoryPage({ params }: { params: Promise<{ name: string }> }) {

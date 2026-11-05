@@ -153,3 +153,16 @@ body {
   background: rgba(255, 255, 255, 0.1);
   font-weight: 600;
 }
+
+/* 背景转场的抹除动画：遮罩从「全不透明」推到「全透明」，
+   用 keyframes 而不是 transition，保证每次转场都从头播放 */
+@keyframes bg-wipe {
+  from {
+    -webkit-mask-position: 100% 0%;
+    mask-position: 100% 0%;
+  }
+  to {
+    -webkit-mask-position: 0% 0%;
+    mask-position: 0% 0%;
+  }
+}

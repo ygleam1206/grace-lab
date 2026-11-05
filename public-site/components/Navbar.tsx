@@ -14,7 +14,8 @@ export default function Navbar() {
   const pathname = usePathname();
 
   return (
-    <nav className="glass sticky top-0 z-50 mx-3 mt-4 px-4 sm:mx-4 sm:px-6 py-3 flex items-center justify-between" style={{ borderRadius: 9999 }}>
+    // z-index 要高于背景转场层（z-[60]），否则转场那 1.6 秒会把导航栏一起盖住，看着像消失了
+    <nav className="glass sticky top-0 z-[70] mx-3 mt-4 px-4 sm:mx-4 sm:px-6 py-3 flex items-center justify-between" style={{ borderRadius: 9999 }}>
       <Link href="/" className="text-lg sm:text-xl font-bold tracking-wide shrink-0">
         Grace Lab
       </Link>

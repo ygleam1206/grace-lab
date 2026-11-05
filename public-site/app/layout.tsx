@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import SiteBackground from "@/components/SiteBackground";
+import PageTransition from "@/components/PageTransition";
+import PageContentFade from "@/components/PageContentFade";
 import MusicPlayer from "@/components/MusicPlayer";
 
 export const metadata: Metadata = {
@@ -18,9 +20,12 @@ export default function RootLayout({
     <html lang="zh-CN">
       <body>
         <SiteBackground />
+        <PageTransition />
         <Navbar />
         <MusicPlayer />
-        <main className="max-w-6xl mx-auto px-4 py-8 relative z-10">{children}</main>
+        <main className="max-w-6xl mx-auto px-4 py-8 relative z-10">
+          <PageContentFade>{children}</PageContentFade>
+        </main>
       </body>
     </html>
   );
