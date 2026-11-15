@@ -4,8 +4,9 @@
  */
 
 // 这些路由使用流动噪声背景，其余页面用 MicroSlats 板条背景
+// /about 跟主站保持一致，用文章页那套噪声背景
 export const isNoisePage = (path: string) =>
-  /^\/notes\/\d+\/?$/.test(path) || /^\/photo\/?$/.test(path);
+  /^\/notes\/\d+\/?$/.test(path) || /^\/photo\/?$/.test(path) || /^\/about\/?$/.test(path);
 
 // 新背景从左侧推上来、把旧页面盖住的时长（跳转发生在这个时长之后）
 export const WIPE_MS = 1600;

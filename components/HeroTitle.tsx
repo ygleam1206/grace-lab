@@ -1,5 +1,3 @@
-import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
 import { Text_03 } from "@/components/ui/wave-text";
 import { siteConfig } from "@/siteConfig";
 import HomePhoto from "@/components/HomePhoto";
@@ -34,18 +32,10 @@ export default function HeroTitle() {
         )}
       </div>
 
-      {/* 底部：左侧描述 + 右侧按钮 */}
-      <div className="flex items-end justify-between mt-8">
-        <p className="text-sm text-white/50 max-w-md leading-relaxed">
-          {siteConfig.bio}
-        </p>
-        <Link
-          href="/notes"
-          className="flex items-center gap-1.5 border border-white/30 rounded-full px-5 py-2 text-sm hover:bg-white/10 transition-all shrink-0"
-        >
-          VISIT <ArrowUpRight size={14} />
-        </Link>
-      </div>
+      {/* 底部：站点描述（About 入口在导航栏头像上） */}
+      <p className="text-sm text-white/50 max-w-md leading-relaxed mt-8">
+        {siteConfig.bio}
+      </p>
 
       {/* 右侧照片（绝对定位，不影响原有布局） */}
       <HomePhoto src="/images/hero.png" alt="Hero" />

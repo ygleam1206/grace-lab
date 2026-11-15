@@ -1,5 +1,3 @@
-import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
 import { Text_03 } from "@/components/ui/wave-text";
 
 export default function HeroTitle() {
@@ -15,7 +13,7 @@ export default function HeroTitle() {
     <div className="flex flex-col">
       {/* 顶部小字 */}
       <div>
-        <p className="text-xs text-white/40 tracking-widest">文章</p>
+        <p className="text-xs text-white/40 tracking-widest">Author</p>
         <p className="text-xs text-white/50 tracking-[0.2em] uppercase mt-0.5">Grace</p>
       </div>
 
@@ -31,18 +29,10 @@ export default function HeroTitle() {
         )}
       </div>
 
-      {/* 描述 */}
+      {/* 描述（About 入口已移到导航栏头像） */}
       <p className="text-sm text-white/50 leading-relaxed mt-8 max-w-[280px]">
-        个人知识库与学习管理系统
+        
       </p>
-
-      {/* VISIT 按钮 */}
-      <Link
-        href="/notes"
-        className="mt-6 flex items-center gap-1.5 self-start border border-white/30 rounded-full px-5 py-2 text-sm hover:bg-white/10 transition-all"
-      >
-        VISIT <ArrowUpRight size={14} />
-      </Link>
     </div>
   );
 }

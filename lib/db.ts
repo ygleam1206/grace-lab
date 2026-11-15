@@ -84,7 +84,20 @@ function initTables(db: Database.Database) {
       sort_order INTEGER DEFAULT 0,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
+
+    -- 个人资料（About 页）：只有一行，id 固定为 1
+    -- avatar 存 uploads 目录下的文件名，bio 为个人简介，signature 为个性签名
+    CREATE TABLE IF NOT EXISTS profile (
+      id INTEGER PRIMARY KEY CHECK (id = 1),
+      avatar TEXT DEFAULT '',
+      bio TEXT DEFAULT '',
+      signature TEXT DEFAULT '',
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
   `);
+
+  // 保证 About 页永远有一行可读可写的资料
+  db.prepare("INSERT OR IGNORE INTO profile (id) VALUES (1)").run();
 
   // 迁移：如果 study_records 缺少 task_id 列，则添加并迁移数据
   try {
