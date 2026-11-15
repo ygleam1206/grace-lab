@@ -118,6 +118,32 @@ if (fs.existsSync(HERO_SRC)) {
   console.log("   复制 hero 图片: 1 张");
 }
 
+// 导出个人资料（About 页）：主站 profile 单行表 + 头像文件
+let profile = { avatar: "", bio: "", signature: "" };
+try {
+  const row = db
+    .prepare("SELECT avatar, bio, signature FROM profile WHERE id = 1")
+    .get();
+  if (row) profile = { avatar: row.avatar || "", bio: row.bio || "", signature: row.signature || "" };
+} catch {
+  console.warn("   ⚠️  数据库里还没有 profile 表，About 页按空资料导出");
+}
+
+if (profile.avatar) {
+  const avatarSrc = path.join(UPLOAD_DIR, profile.avatar);
+  if (fs.existsSync(avatarSrc)) {
+    fs.copyFileSync(avatarSrc, path.join(EXPORT_UPLOADS_DIR, profile.avatar));
+  } else {
+    // 头像文件丢了就别指望线上能显示，按空头像导出
+    console.warn(`   ⚠️  头像文件不存在: ${profile.avatar}`);
+    profile.avatar = "";
+  }
+}
+
+console.log(
+  `   个人资料: 头像${profile.avatar ? " 1 张" : "（空）"}, 简介${profile.bio ? "有" : "空"}, 签名${profile.signature ? "有" : "空"}`
+);
+
 // 同步照片墙：以主应用 public/photos 为源，复制到静态站的本地预览目录
 // 照片文件不进仓库，静态站在构建时直接读取该目录，本地能看到图、线上看到提示
 const PHOTO_SOURCE_DIR = path.join(PROJECT_ROOT, "public", "photos");
@@ -147,6 +173,31 @@ const photoFiles = photoSourceFiles;
 
 console.log(`   照片墙: ${photoFiles.length} 张（仅本地预览，不提交仓库）`);
 
+// 照片元数据：地点 / 配文 / 日期跟着快照一起发布，静态站大图右侧文字栏要用
+let photoMeta = photoFiles.map((filename) => ({
+  filename,
+  location: "",
+  mood: "",
+  taken_at: "",
+}));
+try {
+  const rows = db.prepare("SELECT filename, location, mood, taken_at FROM photos").all();
+  const byName = new Map(rows.map((row) => [row.filename, row]));
+  photoMeta = photoFiles.map((filename) => {
+    const row = byName.get(filename);
+    return {
+      filename,
+      location: row?.location || "",
+      mood: row?.mood || "",
+      taken_at: row?.taken_at || "",
+    };
+  });
+  const filled = photoMeta.filter((item) => item.location || item.mood || item.taken_at).length;
+  console.log(`   照片信息: ${filled}/${photoMeta.length} 张有地点或配文`);
+} catch {
+  console.warn("   ⚠️  数据库里还没有 photos 表，照片信息按空导出");
+}
+
 // 写入 JSON 数据文件
 fs.writeFileSync(
   path.join(EXPORT_DATA_DIR, "notes.json"),
@@ -156,6 +207,16 @@ fs.writeFileSync(
 fs.writeFileSync(
   path.join(EXPORT_DATA_DIR, "categories.json"),
   JSON.stringify(categories, null, 2)
+);
+
+fs.writeFileSync(
+  path.join(EXPORT_DATA_DIR, "profile.json"),
+  JSON.stringify(profile, null, 2)
+);
+
+fs.writeFileSync(
+  path.join(EXPORT_DATA_DIR, "photos.json"),
+  JSON.stringify(photoMeta, null, 2)
 );
 
 db.close();

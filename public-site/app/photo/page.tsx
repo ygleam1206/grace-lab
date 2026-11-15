@@ -1,20 +1,34 @@
 import fs from "fs";
 import path from "path";
-import PhotoWall from "../../components/PhotoWall";
+import PhotoWall, { type PublicPhoto } from "../../components/PhotoWall";
+import photosMeta from "../photos.json";
 
 const BASE_PATH = "/grace-lab";
 const PHOTO_EXTS = /\.(?:jpg|jpeg|png|gif|webp|avif)$/i;
 
 // 照片只保存在本地，不随仓库发布；构建期直接读目录，本地有图就显示，线上没图就显示提示
-function listLocalPhotos(): string[] {
+// 地点 / 配文 / 日期来自 export-public.js 导出的 photos.json，缺字段就给空串
+function listLocalPhotos(): PublicPhoto[] {
   const dir = path.join(process.cwd(), "public", "images", "photos");
   if (!fs.existsSync(dir)) return [];
+
+  const meta = new Map(
+    (photosMeta as { filename: string; location: string; mood: string; taken_at: string }[]).map(
+      (item) => [item.filename, item]
+    )
+  );
 
   return fs
     .readdirSync(dir)
     .filter((file) => PHOTO_EXTS.test(file) && !file.startsWith("."))
     .sort((a, b) => a.localeCompare(b, "zh-CN"))
-    .map((file) => `${BASE_PATH}/images/photos/${encodeURIComponent(file)}`);
+    .map((file) => ({
+      filename: file,
+      url: `${BASE_PATH}/images/photos/${encodeURIComponent(file)}`,
+      location: meta.get(file)?.location ?? "",
+      mood: meta.get(file)?.mood ?? "",
+      taken_at: meta.get(file)?.taken_at ?? "",
+    }));
 }
 
 export const metadata = {
