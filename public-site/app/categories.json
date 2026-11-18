@@ -7,7 +7,7 @@
   },
   {
     "id": 62,
-    "name": "Life",
+    "name": "数据库",
     "cover_image": "",
     "note_count": 1
   },
@@ -20,6 +20,12 @@
   {
     "id": 84,
     "name": "Agent",
+    "cover_image": "",
+    "note_count": 1
+  },
+  {
+    "id": 145,
+    "name": "心情",
     "cover_image": "",
     "note_count": 1
   }
