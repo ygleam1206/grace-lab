@@ -9,6 +9,7 @@ const BASE_PATH = "/grace-lab";
 interface Note {
   id: number;
   title: string;
+  summary?: string;
   content: string;
   category: string;
   tags: string[];

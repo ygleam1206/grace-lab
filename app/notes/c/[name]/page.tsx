@@ -9,6 +9,7 @@ import GlassCard from "@/components/GlassCard";
 interface Note {
   id: number;
   title: string;
+  summary?: string;
   content: string;
   category: string;
   tags: string[];

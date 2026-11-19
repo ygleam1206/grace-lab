@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { FileText } from "lucide-react";
+import { stripHtml } from "../lib/utils";
 
 interface Note {
   id: number;
@@ -55,13 +56,6 @@ function extractCover(note: Note, categories: Category[], basePath: string): str
   const cat = categories.find((c) => c.name === note.category);
   if (cat?.cover_image) return `${basePath}/uploads/${cat.cover_image}`;
   return null;
-}
-
-function stripHtml(html: string) {
-  return html
-    .replace(/<[^>]*>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
 }
 
 export default function NoteFeed({ notes, categories, basePath }: NoteFeedProps) {

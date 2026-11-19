@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { Tag, FolderOpen } from "lucide-react";
 import GlassCard from "./GlassCard";
-import { formatDate } from "@/lib/utils";
+import { formatDate, previewOf } from "@/lib/utils";
 
 interface NoteCardProps {
   id: number;
   title: string;
+  summary?: string;
   content: string;
   category: string;
   tags: string[];
@@ -13,8 +14,9 @@ interface NoteCardProps {
   onCategoryClick?: (category: string) => void;
 }
 
-export default function NoteCard({ id, title, content, category, tags, updated_at, onCategoryClick }: NoteCardProps) {
-  const preview = content.replace(/[#*`>\-\[\]()]/g, "").slice(0, 120);
+export default function NoteCard({ id, title, summary, content, category, tags, updated_at, onCategoryClick }: NoteCardProps) {
+  // 简介优先；简介为空时取正文纯文本，避免卡片上出现 <h2> 这类标签
+  const preview = previewOf(summary, content);
 
   return (
     <Link href={`/notes/${id}`}>
