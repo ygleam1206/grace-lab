@@ -21,6 +21,8 @@ interface NoteSidebarProps {
   // 头像前缀：静态站挂在 /grace-lab 下
   avatarBase?: string;
   noteId: number;
+  // 当前文章的简介：页面侧已经做了「简介优先、回退正文首段」
+  excerpt?: string;
 }
 
 // 库里存的是 "2026-11-18 08:18:41"，直接 new Date 在部分浏览器会得到 Invalid Date
@@ -49,6 +51,7 @@ export default function NoteSidebar({
   currentId,
   noteId,
   avatarBase = "/grace-lab",
+  excerpt = "",
 }: NoteSidebarProps) {
   const bio = (profile?.bio || "").trim();
   const avatar = profile?.avatar || "";
@@ -90,6 +93,14 @@ export default function NoteSidebar({
           </div>
         </dl>
       </DeepCard>
+
+      {/* 文章简介：让读者在右侧栏随时回看这篇讲什么 */}
+      {excerpt && (
+        <DeepCard>
+          <p className="mb-2 text-[11px] tracking-[0.3em] text-white/45">文章简介</p>
+          <p className="whitespace-pre-line text-[13px] leading-6 text-white/75">{excerpt}</p>
+        </DeepCard>
+      )}
 
       {/* 目录：桌面在侧栏，窄屏的目录放在正文上方 */}
       <div className="hidden lg:block">

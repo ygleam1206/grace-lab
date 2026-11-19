@@ -6,12 +6,13 @@ import { Pencil, Trash2, ArrowLeft, Tag, FolderOpen, Calendar } from "lucide-rea
 import GlassCard from "@/components/GlassCard";
 import NoteSidebar, { type SidebarNote, type SidebarProfile } from "@/components/NoteSidebar";
 import NoteToc from "@/components/NoteToc";
-import { formatDate } from "@/lib/utils";
+import { formatDate, previewOf } from "@/lib/utils";
 import DOMPurify from "dompurify";
 
 interface Note {
   id: number;
   title: string;
+  summary?: string;
   content: string;
   category: string;
   tags: string[];
@@ -145,9 +146,15 @@ export default function NoteDetailPage() {
           </GlassCard>
         </div>
 
-        {/* 右 1/4：作者 + 往期文章时间线（窄屏落到正文下方） */}
-        <div className="min-w-0">
-          <NoteSidebar profile={profile} notes={others} currentId={note.id} noteId={note.id} />
+        {/* 右 1/4：作者 + 简介 + 目录 + 时间线；桌面下固定在视口内单独滚动 */}
+        <div className="min-w-0 lg:sticky lg:top-24 lg:max-h-[calc(100dvh-7rem)] lg:overflow-y-auto lg:overscroll-contain lg:pr-1">
+          <NoteSidebar
+            profile={profile}
+            notes={others}
+            currentId={note.id}
+            noteId={note.id}
+            excerpt={previewOf(note.summary, note.content, 200)}
+          />
         </div>
       </div>
     </div>

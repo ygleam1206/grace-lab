@@ -3,6 +3,7 @@ import { ArrowLeft, FolderOpen, Calendar } from "lucide-react";
 import GlassCard from "@/components/GlassCard";
 import NoteSidebar from "@/components/NoteSidebar";
 import NoteToc from "@/components/NoteToc";
+import { previewOf } from "@/lib/utils";
 import notesData from "../../notes.json";
 import profileData from "../../profile.json";
 
@@ -11,6 +12,7 @@ const BASE_PATH = "/grace-lab";
 interface Note {
   id: number;
   title: string;
+  summary?: string;
   content: string;
   category: string;
   tags: string[];
@@ -98,9 +100,15 @@ export default async function NoteDetailPage({ params }: { params: Promise<{ id:
           </GlassCard>
         </div>
 
-        {/* 右 1/4：作者 + 往期文章时间线（窄屏落到正文下方） */}
-        <div className="min-w-0">
-          <NoteSidebar profile={profile} notes={timeline} currentId={note.id} noteId={note.id} />
+        {/* 右 1/4：作者 + 简介 + 目录 + 时间线；桌面下固定在视口内单独滚动 */}
+        <div className="min-w-0 lg:sticky lg:top-24 lg:max-h-[calc(100dvh-7rem)] lg:overflow-y-auto lg:overscroll-contain lg:pr-1">
+          <NoteSidebar
+            profile={profile}
+            notes={timeline}
+            currentId={note.id}
+            noteId={note.id}
+            excerpt={previewOf(note.summary, note.content, 200)}
+          />
         </div>
       </div>
     </div>
