@@ -11,16 +11,21 @@ interface Category {
 
 interface NoteEditorProps {
   initialTitle?: string;
+  initialSummary?: string;
   initialContent?: string;
   initialCategory?: string;
   initialTags?: string[];
   initialIsPublic?: boolean;
-  onSubmit: (data: { title: string; content: string; category: string; tags: string[]; is_public: boolean }) => void;
+  onSubmit: (data: { title: string; summary: string; content: string; category: string; tags: string[]; is_public: boolean }) => void;
   submitLabel?: string;
 }
 
+// 简介显示在主页卡片上，太长会挤掉标题下方的空间
+const SUMMARY_MAX = 200;
+
 export default function NoteEditor({
   initialTitle = "",
+  initialSummary = "",
   initialContent = "",
   initialCategory = "",
   initialTags = [],
@@ -29,6 +34,7 @@ export default function NoteEditor({
   submitLabel = "保存",
 }: NoteEditorProps) {
   const [title, setTitle] = useState(initialTitle);
+  const [summary, setSummary] = useState(initialSummary);
   const [content, setContent] = useState(initialContent);
   const [category, setCategory] = useState(initialCategory);
   const [tagInput, setTagInput] = useState(initialTags.join(", "));
@@ -71,7 +77,7 @@ export default function NoteEditor({
       .split(",")
       .map((t) => t.trim())
       .filter(Boolean);
-    onSubmit({ title, content, category, tags, is_public: isPublic });
+    onSubmit({ title, summary: summary.trim(), content, category, tags, is_public: isPublic });
   };
 
   return (
@@ -84,6 +90,20 @@ export default function NoteEditor({
         className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-lg font-semibold placeholder-white/40 focus:outline-none focus:border-white/40"
         required
       />
+
+      {/* 简介：只在列表/主页卡片上展示，正文页面不出现 */}
+      <div>
+        <textarea
+          placeholder="简介（显示在主页卡片上，留空自动取正文首段）"
+          value={summary}
+          onChange={(e) => setSummary(e.target.value.slice(0, SUMMARY_MAX))}
+          rows={2}
+          className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-sm leading-6 placeholder-white/40 focus:outline-none focus:border-white/40 resize-none"
+        />
+        <p className="mt-1 text-right text-xs text-white/40">
+          {summary.length}/{SUMMARY_MAX}
+        </p>
+      </div>
 
       {/* 分类选择器 */}
       <div className="flex gap-3">

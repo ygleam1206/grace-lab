@@ -39,7 +39,7 @@ console.log(`   输出目录: ${EXPORT_DATA_DIR}`);
 
 // 导出公开笔记（含标签）
 const notes = db.prepare(`
-  SELECT n.id, n.title, n.content, n.category,
+  SELECT n.id, n.title, n.summary, n.content, n.category,
     GROUP_CONCAT(t.name) as tags,
     n.created_at, n.updated_at
   FROM notes n

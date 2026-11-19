@@ -159,6 +159,17 @@ function initTables(db: Database.Database) {
   } catch {
     // 迁移失败不影响正常使用
   }
+
+  // 迁移：为 notes 添加 summary 列（列表/主页卡片简介，留空时展示端回退到正文首段）
+  try {
+    const cols = db.prepare("PRAGMA table_info(notes)").all() as { name: string }[];
+    const hasSummary = cols.some((c) => c.name === "summary");
+    if (!hasSummary) {
+      db.exec("ALTER TABLE notes ADD COLUMN summary TEXT DEFAULT ''");
+    }
+  } catch {
+    // 迁移失败不影响正常使用
+  }
 }
 
 export { getDb };

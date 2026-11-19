@@ -7,6 +7,7 @@ import { FileText } from "lucide-react";
 interface Note {
   id: number;
   title: string;
+  summary?: string;
   content: string;
   category: string;
   tags: string[];
@@ -127,7 +128,8 @@ export default function NoteFeed({ notes, categories, basePath }: NoteFeedProps)
     notes.map((note, index) => {
       const cover = extractCover(note, categories, basePath);
       const gradient = getGradient(note.category || note.title);
-      const preview = stripHtml(note.content);
+      // 卡片只给标题 + 简介；简介没填的旧文章回退到正文首段
+      const preview = (note.summary || "").trim() || stripHtml(note.content);
       const order = String((index % notes.length) + 1).padStart(2, "0");
 
       return (

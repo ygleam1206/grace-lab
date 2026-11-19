@@ -10,6 +10,7 @@ export default function EditNotePage() {
   const [loading, setLoading] = useState(true);
   const [initialData, setInitialData] = useState({
     title: "",
+    summary: "",
     content: "",
     category: "",
     tags: [] as string[],
@@ -26,6 +27,7 @@ export default function EditNotePage() {
       const data = await res.json();
       setInitialData({
         title: data.title,
+        summary: data.summary || "",
         content: data.content,
         category: data.category,
         tags: data.tags || [],
@@ -38,6 +40,7 @@ export default function EditNotePage() {
 
   const handleSubmit = async (data: {
     title: string;
+    summary: string;
     content: string;
     category: string;
     tags: string[];
@@ -62,6 +65,7 @@ export default function EditNotePage() {
       <h1 className="text-3xl font-bold mb-8">编辑笔记</h1>
       <NoteEditor
         initialTitle={initialData.title}
+        initialSummary={initialData.summary}
         initialContent={initialData.content}
         initialCategory={initialData.category}
         initialTags={initialData.tags}

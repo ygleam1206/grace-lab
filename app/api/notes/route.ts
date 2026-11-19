@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
 // POST /api/notes — 创建笔记
 export async function POST(request: NextRequest) {
   const body = await request.json();
-  const { title, content, category = "", tags = [], is_public = false } = body;
+  const { title, content, summary = "", category = "", tags = [], is_public = false } = body;
 
   if (!title || !content) {
     return NextResponse.json({ error: "标题和内容不能为空" }, { status: 400 });
@@ -69,8 +69,8 @@ export async function POST(request: NextRequest) {
 
   const db = getDb();
   const result = db.prepare(
-    "INSERT INTO notes (title, content, category, is_public) VALUES (?, ?, ?, ?)"
-  ).run(title, sanitizeNoteContent(content), category, is_public ? 1 : 0);
+    "INSERT INTO notes (title, content, summary, category, is_public) VALUES (?, ?, ?, ?, ?)"
+  ).run(title, sanitizeNoteContent(content), String(summary), category, is_public ? 1 : 0);
 
   const noteId = result.lastInsertRowid as number;
 
@@ -87,5 +87,5 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  return NextResponse.json({ id: noteId, title, content, category, tags }, { status: 201 });
+  return NextResponse.json({ id: noteId, title, content, summary, category, tags }, { status: 201 });
 }

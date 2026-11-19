@@ -44,18 +44,23 @@ export async function PUT(
 ) {
   const { id } = await params;
   const body = await request.json();
-  const { title, content, category, tags, is_public } = body;
+  const { title, content, summary, category, tags, is_public } = body;
 
   const db = getDb();
 
-  const existing = db.prepare("SELECT id FROM notes WHERE id = ?").get(id);
+  const existing = db.prepare("SELECT id, summary FROM notes WHERE id = ?").get(id) as
+    | { id: number; summary: string | null }
+    | undefined;
   if (!existing) {
     return NextResponse.json({ error: "笔记不存在" }, { status: 404 });
   }
 
+  // 未传 summary 时保留原值，避免旧调用把已有简介清空
+  const nextSummary = summary === undefined ? existing.summary ?? "" : String(summary);
+
   db.prepare(
-    "UPDATE notes SET title = ?, content = ?, category = ?, is_public = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?"
-  ).run(title, sanitizeNoteContent(content ?? ""), category ?? "", is_public ? 1 : 0, id);
+    "UPDATE notes SET title = ?, content = ?, summary = ?, category = ?, is_public = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?"
+  ).run(title, sanitizeNoteContent(content ?? ""), nextSummary, category ?? "", is_public ? 1 : 0, id);
 
   // 重新处理标签
   if (tags) {

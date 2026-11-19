@@ -8,6 +8,7 @@ export default function NewNotePage() {
 
   const handleSubmit = async (data: {
     title: string;
+    summary: string;
     content: string;
     category: string;
     tags: string[];
