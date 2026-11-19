@@ -91,6 +91,20 @@ export default function NoteFeed({ notes, categories, basePath }: NoteFeedProps)
       hovered = false;
     };
 
+    // 手动滚轮越过一份的高度时立即回卷：自动滚动被 hover 暂停时也能继续循环
+    const onScroll = () => {
+      if (!canLoop || period <= 0) return;
+      if (el.scrollTop > period) el.scrollTop = el.scrollTop % period;
+    };
+    // 已经在顶部还继续往上滚时，接到第二份的相位等价位置（内容完全一致，视觉无缝）
+    const onWheel = (e: WheelEvent) => {
+      if (!canLoop || period <= 0 || e.deltaY >= 0) return;
+      const next = el.scrollTop + e.deltaY;
+      if (next >= 0) return;
+      // 负数取模归正，保证跳转后的内容相位与“本来应该滚到哪”一致
+      el.scrollTop = ((next % period) + period) % period;
+    };
+
     const tick = (now: number) => {
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
@@ -105,12 +119,16 @@ export default function NoteFeed({ notes, categories, basePath }: NoteFeedProps)
     window.addEventListener("resize", measure);
     el.addEventListener("pointerenter", onEnter);
     el.addEventListener("pointerleave", onLeave);
+    el.addEventListener("scroll", onScroll, { passive: true });
+    el.addEventListener("wheel", onWheel, { passive: true });
 
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", measure);
       el.removeEventListener("pointerenter", onEnter);
       el.removeEventListener("pointerleave", onLeave);
+      el.removeEventListener("scroll", onScroll);
+      el.removeEventListener("wheel", onWheel);
     };
   }, [notes.length]);
 
